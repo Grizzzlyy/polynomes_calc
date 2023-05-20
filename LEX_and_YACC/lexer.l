@@ -1,12 +1,17 @@
-%option noyywrap
+ /* usage: lex filename.l 
+ or flex filename.l
+ >> lex.yy.c */
+ 
+ /* DECLARATIONS */
+
+ /* Auxiliary declarations start here */
+%option noyywrap 
 %{
-	#include <stdlib.h>
-	#include <stdio.h>
-	#include <string.h>
-	#include "y.tab.h"
-	#include "polynom.h"
-	extern int yylex();
-	int gLineNum;
+	#include <stdio.h> /* for printf */
+	#include <stdlib.h> /* for atoi */
+	#include <string.h> /* for strncpy */
+	#include "y.tab.h" /* for yylval, yyparse */
+	int line_count;
 %}
 
 comment		[/][/].*
@@ -25,11 +30,13 @@ opMinus		[-]
 number		[0-9]+
 print		(print)+
 string		[a-zA-Z_][a-zA-Z0-9_]*
-%%
+
+%% 
+ /* RULES */
 
 {comment}	;
 {emptySpace}	;
-{endAfterInstr}	{printf("\n"); }{gLineNum++;return LEND;}
+{endAfterInstr}	{printf("\n"); }{line_count++;return LEND;}
 {instructEnd}	{printf(";");	}{return IEND;}
 {opAssing}	{printf("=");	}{return ASSING;}
 {advert}	{printf("$");	}{return POLYADV;}
@@ -44,33 +51,34 @@ string		[a-zA-Z_][a-zA-Z0-9_]*
 {print}		{printf("pnt");	}{return IPRINT;}
 {string}	{printf("str");	}{memset(yylval.str, 0, 32); strncpy(yylval.str, yytext, 32);return STRING;}
 
-%%
-
-int isPolynomFile(char *file_name) {
-	if (!strcmp(strrchr(file_name, '.'), ".polynom"))
-		return 1;
-	else
-		return 0;
-}
+%%  
+ /* AUXILIARY FUNCTIONS */
  
 int main(int argc, char* argv[])
 {
-	yyin = fopen(argv[1], "r");
-
-	if (yyin == NULL)
+	FILE *fp;
+	
+	if(argc > 1)
 	{
-		printf("[Error] File not found!\n");
+		fp = fopen(argv[1], "r");
+		if(fp)
+		{
+			yyin = fp;
+		}
+		else
+		{
+			printf("[E] Cannot find file %s\n", argv[1]);
+			return 1;
+		}
+			
+	}
+	else
+	{
+		printf("argument is not provided\nusage: ./exe polynome.txt");
 		return 1;
 	}
-	else if (!isPolynomFile(argv[1]))
-	{
-		printf("[Error] Incorrect file's format! (you need .polynom)\n");
-		return 1;
-	}
 
-	//yylex();
 	yyparse();
-
-	fclose(yyin);
+	fclose(fp);
 	return 0;
 }

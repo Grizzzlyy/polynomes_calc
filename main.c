@@ -1,8 +1,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "polynom.h"
+#include "structs.h"
 
-extern int gLineNum;
+extern int line_count;
 #define bool char
 #define false 0
 #define true 1
@@ -442,11 +442,11 @@ void printPolynom(struct Polynom *polynom)
 
 	void yyerror(char const *s)
 {
-	printf("ERROR in line %d: '%s'\n", gLineNum + 1, s);
+	printf("ERROR in line %d: '%s'\n", line_count + 1, s);
 }
 
 void printError(const char *s1, const char *s2)
 {
-	printf("ERROR in line %d: %s%s\n", gLineNum + 1, s1, s2);
+	printf("ERROR in line %d: %s%s\n", line_count + 1, s1, s2);
 	exit(-1);
 }

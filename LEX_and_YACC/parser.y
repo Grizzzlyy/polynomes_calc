@@ -1,9 +1,9 @@
 %{
 	#include<stdio.h>
 	#include<stdlib.h>
-	#include "polynom.h"
+	#include "structs.h"
 	int yydebug = 1;
-	extern int gLineNum;
+	extern int line_count;
 %}
 
 %union

@@ -6,7 +6,7 @@
 #include <string.h>
 #include <ctype.h>
 
-extern int gLineNum;
+// sextern int line_count;
 
 struct Mononom
 {
