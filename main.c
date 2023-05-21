@@ -72,7 +72,7 @@ struct Polinomial* initVariable(char *variable)
 		}
 		varList = varList->after_;
 	}
-	printError("[ERROR] Variable is not initialized", variable);
+	printError("[ERROR] Variable is not initialized: $", variable);
 }
 
 struct Monomial* createMonomial(int coefficient, char* variable, int degree, bool is_number){
@@ -106,7 +106,16 @@ struct Part * deleteNode(struct Polinomial *polynom, struct Part *node)
 {
 	struct Part * result = node;
 
-	if (polynom->begin_ == node)
+	if (node != polynom->begin_ ){
+		if(node->after_ != NULL){
+			node->after_->before_ = node->before_;
+		}
+		node->before_->after_ = node->after_;
+		
+		result = node->before_;
+		free(node);
+	}
+	else if (polynom->begin_ == node)
 	{
 		if (node->after_ == NULL)
 		{
@@ -122,25 +131,13 @@ struct Part * deleteNode(struct Polinomial *polynom, struct Part *node)
 		return result;
 	}
 
-	if (node->after_ == NULL)
-	{
-		node->before_->after_ = NULL;
-		result = node->before_;
-
-		free(node);
-		return result;
-	}
-
-	node->after_->before_ = node->before_;
-	node->before_->after_ = node->after_;
-	result = node->before_;
 	free(node);
 	return result;
 }
 
-struct Polinomial * deleteSimilarSummands(struct Polinomial polynom)
+struct Polinomial* deleteSimilarSummands(struct Polinomial polynom)
 {
-	struct Polinomial * result = NULL;
+	struct Polinomial* result = NULL;
 	for (struct Part *i = polynom.begin_; i != NULL;)
 	{
 		struct Monomial mononom = i->mono_;
