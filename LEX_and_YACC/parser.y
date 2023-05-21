@@ -18,33 +18,33 @@
 %type <polyn> 	poly
 %type <mon> 	mononom
 
-%token <num> 	NUMBER
-%token <str> 	STRING IPRINT
+%token <num> 	NUM
+%token <str> 	STR PRINT
 
-%left PLUS MINUS
-%left MULTI DIVIS
+%left PLUS SUB
+%left MULT DIV
 %right UMINUS
-%left POWER
+%left PWR
 
 %start start
-%token ASSING POLYADV LBR RBR COMMENT IEND LEND
+%token EQS DLLR LBKT RBKT EOO EOL
 %%
 
 start:
 	//empty
-	| start IEND
-	| start LEND
+	| start EOO
+	| start EOL
 	| start '\r'
 	| start command
 	;
 command:
-	variable ASSING poly IEND
+	variable EQS poly EOO
 	{
 		//printf("$p = poly;\n");
 		addVariableToList($1, *$3);
 		free($3);
 	}
-	| IPRINT poly IEND
+	| PRINT poly EOO
 	{
 		//printf("[POLY] poly\n");
 		printf("[POLY] ");
@@ -74,7 +74,7 @@ poly:
 		$$ = addMononomToPolynom(*$$, *$1);
 		free($1);
 	}
-	| LBR poly RBR
+	| LBKT poly RBKT
 	{
 		//printf("()\n");
 		$$ = $2;
@@ -86,7 +86,7 @@ poly:
 		free($1);
 		free($3);
 	}
-	| poly MINUS poly
+	| poly SUB poly
 	{
 		//printf("-\n");
 		$$ = subPolynoms(*$1, *$3);
@@ -94,30 +94,30 @@ poly:
 		free($1);
 		free($3);
 	}
-	| poly MULTI poly
+	| poly MULT poly
 	{
 		//printf("*\n");
 		$$ = mulPolynoms(*$1, *$3);
 		free($1);
 		free($3);
 	}
-	| poly poly %prec MULTI
+	| poly poly %prec MULT
 	{
 		$$ = mulPolynoms(*$1, *$2);
 		free($1);
 		free($2);
 	}
-	| poly DIVIS poly
+	| poly DIV poly
 	{
 		//printf("/\n");
 		// todo
 	}
-	| MINUS poly %prec UMINUS
+	| SUB poly %prec UMINUS
 	{
 		//printf("U-\n");
 		$$ = unaryMinus($2);
 	}
-	| poly POWER poly
+	| poly PWR poly
 	{
 		//printf("^\n");
 		if (strcmp($3->begin->item.variable, "") != 0)
@@ -166,26 +166,26 @@ poly:
 	;
 mononom:
 	/*
-	NUMBER STRING %prec MULTI
+	NUM STR %prec MULT
 	{
 		$$ = sumPolynoms(*(setMononom($1, "", 0)), *(setMononom(1, $2, 1)));
 		free($1);
 		free($2);
 	}	
 	| */
-	NUMBER
+	NUM
 	{
 		//printf("num\n");
 		$$ = setMononom($1, "", 0);
 	}
-	| STRING
+	| STR
 	{
 		//printf("Mstr\n");
 		$$ = setMononom(1, $1, 1);
 	}
 	;
 variable:
-	POLYADV STRING
+	DLLR STR
 	{
 		//printf("var\n");
 		strncpy($$, $2, 32);

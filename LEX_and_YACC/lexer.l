@@ -44,27 +44,27 @@ num			[0-9]+
 
  /*operators*/
 {sum}			{printf("+");	}	{return PLUS;}
-{sub}			{printf("-");	}	{return MINUS;}
-{mult}			{printf("*");	}	{return MULTI;}
-{div}			{printf("/");	}	{return DIVIS;}
-{pwr}			{printf("^");	}	{return POWER;}
-{l_bkt}			{printf("(");	}	{return LBR;}
-{r_bkt}			{printf(")");	}	{return RBR;}
+{sub}			{printf("-");	}	{return SUB;}
+{mult}			{printf("*");	}	{return MULT;}
+{div}			{printf("/");	}	{return DIV;}
+{pwr}			{printf("^");	}	{return PWR;}
+{l_bkt}			{printf("(");	}	{return LBKT;}
+{r_bkt}			{printf(")");	}	{return RBKT;}
 
  /*space*/
-{newline}		{printf("\n"); }	{line_count++;return LEND;}
+{newline}		{printf("\n"); }	{line_count++;return EOL;}
 {singleline_comment}	{printf("COMMENT");} 	{;}
 {empty}			/*{printf("EMPTY");}*/ 	{;}
 
  /*other*/
-{end_of_operation}	{printf(";");	}	{return IEND;}
-{eqs}			{printf("=");	}	{return ASSING;}
-{dllr}			{printf("$");	}	{return POLYADV;}
-{print}			{printf("print");}	{return IPRINT;}
+{end_of_operation}	{printf(";");	}	{return EOO;}
+{eqs}			{printf("=");	}	{return EQS;}
+{dllr}			{printf("$");	}	{return DLLR;}
+{print}			{printf("print");}	{return PRINT;}
 
  /*vars*/
-{num}			{printf("num");	}	{yylval.num = atoi(yytext); return NUMBER;}
-{str}			{printf("str");	}	{memset(yylval.str, 0, 32); strncpy(yylval.str, yytext, 32); return STRING;}
+{num}			{printf("num");	}	{yylval.num = atoi(yytext); return NUM;}
+{str}			{printf("str");	}	{memset(yylval.str, 0, 32); strncpy(yylval.str, yytext, 32); return STR;}
 
 
 
