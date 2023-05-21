@@ -8,53 +8,55 @@
  /* YACC declarations */
 %union
 {
-	struct Polynom*		polyn;
-	struct Mononom*		mon;
-	int 			num;
-	char 			str[32];
+	int 				num_y;
+	char 				str_y[32];
+	struct Mononom*		monomial_t;
+	struct Polynom*		polinomial_t;
 }
 
+ /* start */
+%start start
 
-%type <str>	variable
-%type <polyn> 	poly
-%type <mon> 	mononom
-
-%token <num> 	NUM
-%token <str> 	STR PRINT
+%token EQS DLLR LBKT RBKT EOO EOL
+%token <num_y> 	NUM
+%token <str_y> 	STR PRINT
 
 %left PLUS SUB
-%left MULT DIV
+%left MULT  /* DIV */
 %right UMINUS
 %left PWR
 
-%start start
-%token EQS DLLR LBKT RBKT EOO EOL
+ /* like typedef */
+%type <str_y>	varib
+%type <polinomial_t> 	polinomial
+%type <monomial_t> 	monomial
+
  /* End of YACC declarations */
 %%
 
-start:
-	| start EOO
-	| start EOL
-	| start '\r'
-	| start command
+beginning:
+	beginning EOL
+	| beginning EOO
+	| beginning '\r'
+	| beginning statement
 	;
-command:
-	variable EQS poly EOO
-	{
-		//printf("$p = poly;\n");
-		addVariableToList($1, *$3);
-		free($3);
-	}
-	| PRINT poly EOO
+statement:
+	PRINT polinomial EOO
 	{
 		//printf("[POLY] poly\n");
 		printf("\nRESULT: ");
 		printPolynom($2);
 		free($2);
 	}
+	| varib EQS polinomial EOO
+	{
+		//printf("$p = poly;\n");
+		addVariableToList($1, *$3);
+		free($3);
+	}
 	;
-poly:
-	variable
+polinomial:
+	varib
 	{
 		//printf("variable\n");
 		struct Polynom * poly;
@@ -68,26 +70,26 @@ poly:
 		$$ = mulPolynoms(*$$, *poly);
 		free(poly);
 	}
-	| mononom
+	| monomial
 	{
 		//printf("mononom\n");
 		$$ = initPolynom();
 		$$ = addMononomToPolynom(*$$, *$1);
 		free($1);
 	}
-	| LBKT poly RBKT
+	| LBKT polinomial RBKT
 	{
 		//printf("()\n");
 		$$ = $2;
 	}
-	| poly PLUS poly
+	| polinomial PLUS polinomial
 	{
 		//printf("+\n");
 		$$ = sumPolynoms(*$1, *$3);
 		free($1);
 		free($3);
 	}
-	| poly SUB poly
+	| polinomial SUB polinomial
 	{
 		//printf("-\n");
 		$$ = subPolynoms(*$1, *$3);
@@ -95,31 +97,31 @@ poly:
 		free($1);
 		free($3);
 	}
-	| poly MULT poly
+	| polinomial MULT polinomial
 	{
 		//printf("*\n");
 		$$ = mulPolynoms(*$1, *$3);
 		free($1);
 		free($3);
 	}
-	| poly poly %prec MULT
+	| polinomial polinomial %prec MULT
 	{
 		$$ = mulPolynoms(*$1, *$2);
 		free($1);
 		free($2);
 	}
-	| poly DIV poly
+	/* | polinomial DIV polinomial
 	{
 		printf("warning: division is not realized, so the operation is skipped\n");
 		//printf("/\n");
 		// todo
-	}
-	| SUB poly %prec UMINUS
+	} */
+	| SUB polinomial %prec UMINUS
 	{
 		//printf("U-\n");
 		$$ = unaryMinus($2);
 	}
-	| poly PWR poly
+	| polinomial PWR polinomial
 	{
 		//printf("^\n");
 		if (strcmp($3->begin->item.variable, "") != 0)
@@ -166,7 +168,7 @@ poly:
 		}
 	}
 	;
-mononom:
+monomial:
 	/*
 	NUM STR %prec MULT
 	{
@@ -186,7 +188,7 @@ mononom:
 		$$ = setMononom(1, $1, 1);
 	}
 	;
-variable:
+varib:
 	DLLR STR
 	{
 		//printf("var\n");

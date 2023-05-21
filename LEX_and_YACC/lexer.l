@@ -17,22 +17,22 @@
  /*operators*/
 sum			[+]
 sub			[-]
-mult			[*]
-div			[/]
+mult		[*]
+ /* div			[/] */
 pwr			['^']
-l_bkt			[(]
-r_bkt			[)]
+l_bkt		[(]
+r_bkt		[)]
 
  /*space*/
-newline			[\n]
+newline				[\n]
 singleline_comment	[/][/].* 
-empty			[ \t\r]
+empty				[ \t\r]
 
  /*other*/
 end_of_operation	[;]
-eqs			[=]
-dllr			[$]
-print			(print)+
+eqs					[=]
+dllr				[$]
+print				(print)+
 
  /*vars*/
 str			[a-zA-Z_][a-zA-Z0-9_]*
@@ -46,7 +46,7 @@ num			[0-9]+
 {sum}			{printf("+");	}	{return PLUS;}
 {sub}			{printf("-");	}	{return SUB;}
 {mult}			{printf("*");	}	{return MULT;}
-{div}			{printf("/");	}	{return DIV;}
+ /* {div}			{printf("/");	}	{return DIV;} */
 {pwr}			{printf("^");	}	{return PWR;}
 {l_bkt}			{printf("(");	}	{return LBKT;}
 {r_bkt}			{printf(")");	}	{return RBKT;}
@@ -63,8 +63,8 @@ num			[0-9]+
 {print}			{printf("print");}	{return PRINT;}
 
  /*vars*/
-{num}			{printf("num");	}	{yylval.num = atoi(yytext); return NUM;}
-{str}			{printf("str");	}	{memset(yylval.str, 0, 32); strncpy(yylval.str, yytext, 32); return STR;}
+{num}			{printf("num");	}	{yylval.num_y = atoi(yytext); return NUM;}
+{str}			{printf("str");	}	{memset(yylval.str_y, 0, 32); strncpy(yylval.str_y, yytext, 32); return STR;}
 
 
 
