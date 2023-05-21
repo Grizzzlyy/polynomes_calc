@@ -6,8 +6,6 @@
 #include <string.h>
 #include <ctype.h>
 
-// sextern int line_count;
-
 struct Mononom
 {
 	int coefficient;

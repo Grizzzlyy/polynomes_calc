@@ -52,7 +52,7 @@ num			[0-9]+
 {r_bkt}			{printf(")");	}	{return RBKT;}
 
  /*space*/
-{newline}		{printf("\n"); }	{line_count++;return EOL;}
+{newline}		{printf("\n"); }	{line_count++; return EOL;}
 {singleline_comment}	{printf("COMMENT");} 	{;}
 {empty}			/*{printf("EMPTY");}*/ 	{;}
 

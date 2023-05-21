@@ -1,11 +1,11 @@
 %{
-	#include<stdio.h>
-	#include<stdlib.h>
-	#include "../structs.h"
-	int yydebug = 1;
-	extern int line_count;
+	#include <stdio.h> /* for printf */
+	#include <stdlib.h> /* for free */
+	#include "../structs.h" /* Polynomes, etc */
+	int yydebug = 1; /* for debug */
 %}
 
+ /* YACC declarations */
 %union
 {
 	struct Polynom*		polyn;
@@ -13,6 +13,7 @@
 	int 			num;
 	char 			str[32];
 }
+
 
 %type <str>	variable
 %type <polyn> 	poly
@@ -28,10 +29,10 @@
 
 %start start
 %token EQS DLLR LBKT RBKT EOO EOL
+ /* End of YACC declarations */
 %%
 
 start:
-	//empty
 	| start EOO
 	| start EOL
 	| start '\r'
@@ -47,7 +48,7 @@ command:
 	| PRINT poly EOO
 	{
 		//printf("[POLY] poly\n");
-		printf("[POLY] ");
+		printf("RESULT: ");
 		printPolynom($2);
 		free($2);
 	}

@@ -345,7 +345,7 @@ void printMononom(struct Mononom *mononom)
 void printPolynom(struct Polynom *polynom)
 {
 	struct Node *begin = polynom->begin;
-	printf("= ");
+	// printf("= ");
 	
 	while (begin->item.coefficient == 0 && begin->next != NULL)
 	{
