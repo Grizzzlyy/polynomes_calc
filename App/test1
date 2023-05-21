@@ -1,0 +1,6 @@
+$A=-(x-1);
+$B=(x+1);
+$A=$A*$B;
+print $A;
+// RESULT: -x^2+1. as expected
+ 
