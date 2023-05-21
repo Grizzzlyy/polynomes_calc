@@ -435,7 +435,7 @@ void printPolynom(struct Polynom *polynom)
 }
 
 #ifdef __unix__
-	#include "y.tab.h"
+	#include "Build/y.tab.h"
 #elif defined _WIN32 
 	#include "y_tab.h"
 #endif
