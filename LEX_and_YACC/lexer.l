@@ -17,22 +17,22 @@
  /*operators*/
 sum			[+]
 sub			[-]
-mult			[*]
+mult		[*]
 div			[/]
 pwr			['^']
-l_bkt			[(]
-r_bkt			[)]
+l_bkt		[(]
+r_bkt		[)]
 
  /*space*/
-newline			[\n]
+newline				[\n]
 singleline_comment	[/][/].* 
-empty			[ \t\r]
+empty				[ \t\r]
 
  /*other*/
 end_of_operation	[;]
-eqs			[=]
-dllr			[$]
-print			(print)+
+eqs					[=]
+dllr				[$]
+print				(print)+
 
  /*vars*/
 str			[a-zA-Z_][a-zA-Z0-9_]*

@@ -1,4 +1,5 @@
 //bruh
+print x*1;
 $a = x+1; $b = x-1; print $a * $b;
 $kaka1 = xxxx^3; $kaka2 = xxxx; print $kaka1 * $kaka2;
 

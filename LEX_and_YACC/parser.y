@@ -23,8 +23,8 @@
 %token <str> 	STR PRINT
 
 %left PLUS SUB
-%left MULT DIV
-%right UMINUS
+%left MULT DIV /* priotiry is higher, so they are below PLUS and SUB declarations */
+%right UMINUS /* delete */
 %left PWR
 
 %start start

@@ -8,7 +8,7 @@ all: create_folder yacc lex cc
 	@echo "make done!"
 	
 cc:
-	@gcc -g -w $(BUILD)lex.yy.c main.c structs.h $(BUILD)$(OUT_YACC_H) $(BUILD)$(OUT_YACC) -o $(OUT)
+	@gcc -g -w $(BUILD)lex.yy.c $(BUILD)$(OUT_YACC_H) $(BUILD)$(OUT_YACC) funcs.c funcs.h structs.h  -o $(OUT)
 
 create_folder:
 	@mkdir $(BUILD)
