@@ -48,7 +48,7 @@ command:
 	| PRINT poly EOO
 	{
 		//printf("[POLY] poly\n");
-		printf("RESULT: ");
+		printf("\nRESULT: ");
 		printPolynom($2);
 		free($2);
 	}

@@ -1,15 +1,17 @@
-#ifndef POLYC_H_
-#define POLYC_H_
+#ifndef STRUCT_H_
+#define STRUCT_H_
 
 #include <stdio.h>	
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
+#define MAX_L 50
+
 struct Mononom
 {
 	int coefficient;
-	char variable[32];
+	char variable[MAX_L];
 	int power;
 };
 
