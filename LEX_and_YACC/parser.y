@@ -110,6 +110,7 @@ poly:
 	}
 	| poly DIV poly
 	{
+		printf("warning: division is not realized, so the operation is skipped\n");
 		//printf("/\n");
 		// todo
 	}
