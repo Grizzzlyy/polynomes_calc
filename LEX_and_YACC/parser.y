@@ -9,13 +9,13 @@
 %union
 {
 	int 				num_y;
-	char 				str_y[32];
+	char 				str_y[50];
 	struct Mononom*		monomial_t;
 	struct Polynom*		polinomial_t;
 }
 
  /* start */
-%start start
+%start beginning
 
 %token EQS DLLR LBKT RBKT EOO EOL
 %token <num_y> 	NUM
@@ -35,7 +35,7 @@
 %%
 
 beginning:
-	beginning EOL
+	| beginning EOL
 	| beginning EOO
 	| beginning '\r'
 	| beginning statement
@@ -53,6 +53,13 @@ statement:
 		//printf("$p = poly;\n");
 		addVariableToList($1, *$3);
 		free($3);
+	}
+	;
+varib:
+	DLLR STR
+	{
+		//printf("var\n");
+		strncpy($$, $2, MAX_L);
 	}
 	;
 polinomial:
@@ -188,11 +195,5 @@ monomial:
 		$$ = setMononom(1, $1, 1);
 	}
 	;
-varib:
-	DLLR STR
-	{
-		//printf("var\n");
-		strncpy($$, $2, 32);
-	}
-	;
+
 %%
