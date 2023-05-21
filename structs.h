@@ -50,7 +50,7 @@ struct Polinomial* RemoveSimilarTerms (struct Polinomial);
 struct Polinomial* sumPolynoms (struct Polinomial, struct Polinomial);
 struct Polinomial* subPolynoms (struct Polinomial, struct Polinomial);
 struct Polinomial* mulPolynoms (struct Polinomial, struct Polinomial);
-struct Polinomial* unaryMinus (struct Polinomial *);
+struct Polinomial* MinusUnar (struct Polinomial *);
 void printMononom (struct Monomial *);
 void printPolynom (struct Polinomial *);
 #endif

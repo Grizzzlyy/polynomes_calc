@@ -96,7 +96,7 @@ polinomial:
 	}
 	| SUB polinomial %prec UMINUS
 	{
-		$$ = unaryMinus($2);
+		$$ = MinusUnar($2);
 	}
 	| polinomial PWR polinomial
 	{
