@@ -71,22 +71,19 @@ polinomial:
 	}
 	| polinomial PLUS polinomial
 	{
-		//printf("+\n");
 		$$ = sumPolynoms(*$1, *$3);
 		free($1);
 		free($3);
 	}
 	| polinomial SUB polinomial
 	{
-		//printf("-\n");
 		$$ = subPolynoms(*$1, *$3);
-		$$ = deleteSimilarSummands(*$$);
+		$$ = RemoveSimilarTerms(*$$);
 		free($1);
 		free($3);
 	}
 	| polinomial MULT polinomial
 	{
-		//printf("*\n");
 		$$ = mulPolynoms(*$1, *$3);
 		free($1);
 		free($3);
@@ -99,12 +96,10 @@ polinomial:
 	}
 	| SUB polinomial %prec UMINUS
 	{
-		//printf("U-\n");
 		$$ = unaryMinus($2);
 	}
 	| polinomial PWR polinomial
 	{
-		//printf("^\n");
 		if (strcmp($3->begin_->mono_.var_, "") != 0)
 		{
 			printError("[ERROR] Wrong degree: ^", $3->begin_->mono_.var_);
@@ -148,7 +143,6 @@ polinomial:
 	}
 	|varib
 	{
-		//printf("variable\n");
 		struct Polinomial * poly;
 		struct Monomial *mono = createMonomial(1, "", 0, true);
 		poly = initPolynom(*mono);
@@ -163,12 +157,10 @@ polinomial:
 monomial:
 	NUM
 	{
-		//printf("num\n");
 		$$ = createMonomial($1, "", 0, true);
 	}
 	| STR
 	{
-		//printf("Mstr\n");
 		$$ = createMonomial(1, $1, 1, false);
 	}
 	;

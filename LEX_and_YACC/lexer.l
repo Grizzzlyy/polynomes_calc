@@ -43,28 +43,27 @@ num			[0-9]+
  /* RULES */
 
  /*operators*/
-{sum}			{printf("+");	}	{return PLUS;}
-{sub}			{printf("-");	}	{return SUB;}
-{mult}			{printf("*");	}	{return MULT;}
- /* {div}			{printf("/");	}	{return DIV;} */
-{pwr}			{printf("^");	}	{return PWR;}
-{l_bkt}			{printf("(");	}	{return LBKT;}
-{r_bkt}			{printf(")");	}	{return RBKT;}
+{sum}					{return PLUS;}
+{sub}					{return SUB;}
+{mult}					{return MULT;}
+{pwr}					{return PWR;}
+{l_bkt}					{return LBKT;}
+{r_bkt}					{return RBKT;}
 
  /*space*/
-{newline}		{printf("\n"); }	{line_count++; return EOL;}
-{singleline_comment}	{printf("COMMENT");} 	{;}
-{empty}			/*{printf("EMPTY");}*/ 	{;}
+{newline}				{line_count++; return EOL;}
+{singleline_comment} 	{;}
+{empty}		 			{;}
 
  /*other*/
-{end_of_operation}	{printf(";");	}	{return EOO;}
-{eqs}			{printf("=");	}	{return EQS;}
-{dllr}			{printf("$");	}	{return DLLR;}
-{print}			{printf("print");}	{return PRINT;}
+{end_of_operation}		{return EOO;}
+{eqs}					{return EQS;}
+{dllr}					{return DLLR;}
+{print}					{return PRINT;}
 
  /*vars*/
-{num}			{printf("num");	}	{yylval.num_y = atoi(yytext); return NUM;}
-{str}			{printf("str");	}	{memset(yylval.str_y, 0, 32); strncpy(yylval.str_y, yytext, 32); return STR;}
+{num}					{yylval.num_y = atoi(yytext); return NUM;}
+{str}					{memset(yylval.str_y, 0, 32); strncpy(yylval.str_y, yytext, 32); return STR;}
 
 
 

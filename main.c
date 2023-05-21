@@ -133,7 +133,7 @@ struct Part * deleteNode(struct Polinomial *polynom, struct Part *node)
 	return result;
 }
 
-struct Polinomial* deleteSimilarSummands(struct Polinomial polynom)
+struct Polinomial* RemoveSimilarTerms(struct Polinomial polynom)
 {
 	struct Polinomial* result = NULL;
 	for (struct Part *i = polynom.begin_; i != NULL;)
@@ -196,7 +196,7 @@ struct Polinomial* sumPolynoms(struct Polinomial p1, struct Polinomial p2)
 	}
 
 	freePtr = result;
-	result = deleteSimilarSummands(*result);
+	result = RemoveSimilarTerms(*result);
 	free(freePtr);
 	return result;
 }
@@ -208,7 +208,7 @@ struct Polinomial* unaryMinus(struct Polinomial *polynom)
 		node->mono_.coef_ *= (-1);
 	}
 
-	struct Polinomial * result = deleteSimilarSummands(*polynom);
+	struct Polinomial * result = RemoveSimilarTerms(*polynom);
 	return result;
 }
 
@@ -232,7 +232,7 @@ struct Polinomial * subPolynoms(struct Polinomial p1, struct Polinomial p2)
 
 	struct Polinomial *minusP2 = unaryMinus(&p2);
 	struct Polinomial * result = sumPolynoms(p1, *minusP2);
-	result = deleteSimilarSummands(*result);
+	result = RemoveSimilarTerms(*result);
 
 	return result;
 }
@@ -283,7 +283,7 @@ struct Polinomial * mulPolynoms(struct Polinomial p1, struct Polinomial p2)
 	}
 
 	struct Polinomial *freePtr = result;
-	result = deleteSimilarSummands(*result);
+	result = RemoveSimilarTerms(*result);
 	free(freePtr);
 	return result;
 }
