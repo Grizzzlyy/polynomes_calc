@@ -14,42 +14,59 @@
 	int line_count;
 %}
 
-comment		[/][/].*
-emptySpace	[ \t\r]
-endAfterInstr	[\n]
-instructEnd	[;]
-opAssing	[=]
-advert		[$]
-opPower		['^']
-leftBracket	[(]
-rightBracket[)]
-opMulti		[*]
-opDivis		[/]
-opPlus		[+]
-opMinus		[-]
-number		[0-9]+
-print		(print)+
-string		[a-zA-Z_][a-zA-Z0-9_]*
+ /*operators*/
+sum			[+]
+sub			[-]
+mult			[*]
+div			[/]
+pwr			['^']
+l_bkt			[(]
+r_bkt			[)]
+
+ /*space*/
+newline			[\n]
+singleline_comment	[/][/].* 
+empty			[ \t\r]
+
+ /*other*/
+end_of_operation	[;]
+eqs			[=]
+dllr			[$]
+print			(print)+
+
+ /*vars*/
+str			[a-zA-Z_][a-zA-Z0-9_]*
+num			[0-9]+
+
 
 %% 
  /* RULES */
 
-{comment}	;
-{emptySpace}	;
-{endAfterInstr}	{printf("\n"); }{line_count++;return LEND;}
-{instructEnd}	{printf(";");	}{return IEND;}
-{opAssing}	{printf("=");	}{return ASSING;}
-{advert}	{printf("$");	}{return POLYADV;}
-{opPower}	{printf("^");	}{return POWER;}
-{leftBracket}	{printf("(");	}{return LBR;}
-{rightBracket}	{printf(")");	}{return RBR;}
-{opMulti}	{printf("*");	}{return MULTI;}
-{opDivis}	{printf("/");	}{return DIVIS;}
-{opPlus}	{printf("+");	}{return PLUS;}
-{opMinus}	{printf("-");	}{return MINUS;}
-{number}	{printf("num");	}{yylval.num = atoi(yytext);return NUMBER;}
-{print}		{printf("pnt");	}{return IPRINT;}
-{string}	{printf("str");	}{memset(yylval.str, 0, 32); strncpy(yylval.str, yytext, 32);return STRING;}
+ /*operators*/
+{sum}			{printf("+");	}	{return PLUS;}
+{sub}			{printf("-");	}	{return MINUS;}
+{mult}			{printf("*");	}	{return MULTI;}
+{div}			{printf("/");	}	{return DIVIS;}
+{pwr}			{printf("^");	}	{return POWER;}
+{l_bkt}			{printf("(");	}	{return LBR;}
+{r_bkt}			{printf(")");	}	{return RBR;}
+
+ /*space*/
+{newline}		{printf("\n"); }	{line_count++;return LEND;}
+{singleline_comment}	{printf("COMMENT");} 	{;}
+{empty}			/*{printf("EMPTY");}*/ 	{;}
+
+ /*other*/
+{end_of_operation}	{printf(";");	}	{return IEND;}
+{eqs}			{printf("=");	}	{return ASSING;}
+{dllr}			{printf("$");	}	{return POLYADV;}
+{print}			{printf("print");}	{return IPRINT;}
+
+ /*vars*/
+{num}			{printf("num");	}	{yylval.num = atoi(yytext); return NUMBER;}
+{str}			{printf("str");	}	{memset(yylval.str, 0, 32); strncpy(yylval.str, yytext, 32); return STRING;}
+
+
 
 %%  
  /* AUXILIARY FUNCTIONS */
