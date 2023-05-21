@@ -107,7 +107,7 @@ polinomial:
 		//printf("^\n");
 		if (strcmp($3->begin_->mono_.var_, "") != 0)
 		{
-			printError("incorrect pow: ^", $3->begin_->mono_.var_);
+			printError("[ERROR] Wrong degree: ^", $3->begin_->mono_.var_);
 			free($1);
 			free($3);
 			return -1;
@@ -118,7 +118,7 @@ polinomial:
 		{
 			if ($1->begin_->mono_.coef_ == 0)
 			{
-				printError("uncertainty (0^0)", "");
+				printError("[ERROR] Get out Hacker! (0^0)", "");
 			}
 			struct Monomial *mono = createMonomial(1, "", 0, false);
 			$$ = initPolynom(*mono);
@@ -143,7 +143,7 @@ polinomial:
 		}
 		else
 		{
-			printError("power cannot be < 0", "");
+			printError("[ERROR] degree cannot be less than 0", "");
 		}
 	}
 	|varib
