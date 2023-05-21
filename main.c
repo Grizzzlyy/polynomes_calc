@@ -3,20 +3,37 @@
 #include "structs.h"
 
 extern int line_count;
-#define bool char
 #define false 0
 #define true 1
 
-struct Variable* gVariableList = NULL;
+struct LanguageVar* gVariableList = NULL;
 
-void addVariableToList(char *letter, struct Polynom polynom)
+struct Polinomial* initPolynom(struct Monomial mono)
 {
-	struct Variable* var = (struct Variable *)malloc(sizeof(struct Variable));
-	var->variable = (char*) malloc(MAX_L);
-	strncpy(var->variable, letter, MAX_L);
-	var->polynom = polynom;
-	var->next = NULL;
-	var->prev = NULL;
+	struct Polinomial *new_poly = (struct Polinomial *)malloc(sizeof(struct Polinomial));
+
+	new_poly->begin_ = (struct Part *) malloc(sizeof(struct Part));
+	new_poly->begin_->before_= NULL;
+	new_poly->begin_->after_ = NULL;
+
+	new_poly->begin_->mono_ = mono; //first monomial
+
+	new_poly->end_ = new_poly->begin_;
+
+	new_poly->count_parts_ = 1;
+
+	return new_poly;
+}
+
+
+void addVariableToList(char *letter, struct Polinomial polynom)
+{
+	struct LanguageVar* var = (struct LanguageVar *)malloc(sizeof(struct LanguageVar));
+	var->var_ = (char*) malloc(MAX_LEN);
+	strncpy(var->var_, letter, MAX_LEN);
+	var->poly_ = polynom;
+	var->after_ = NULL;
+	var->before_ = NULL;
 
 	if (gVariableList == NULL)
 	{
@@ -24,154 +41,120 @@ void addVariableToList(char *letter, struct Polynom polynom)
 		return;
 	}
 
-	struct Variable *varList = gVariableList;
-	for (; varList->next != NULL; varList = varList->next)
+	struct LanguageVar *varList = gVariableList;
+	for (; varList->after_ != NULL; varList = varList->after_)
 	{
-		if (!strcmp(varList->variable, letter))
+		if (!strcmp(varList->var_, letter))
 		{
-			varList->polynom = polynom;
+			varList->poly_ = polynom;
 			return;
 		}
 	}
 
-	if (!strcmp(varList->variable, letter))
+	if (!strcmp(varList->var_, letter))
 	{
-		varList->polynom = polynom;
+		varList->poly_ = polynom;
 		return;
 	}
 
-	var->prev = varList;
-	varList->next = var;
+	var->before_ = varList;
+	varList->after_ = var;
 }
 
-struct Polynom* getVariable(char *variable)
+struct Polinomial* initVariable(char *variable)
 {
-	struct Variable* varList = gVariableList;
+	struct LanguageVar* varList = gVariableList;
 	while (varList != NULL)
 	{
-		if (!strcmp(varList->variable, variable))
+		if (!strcmp(varList->var_, variable))
 		{
-			return &(varList->polynom);
+			return &(varList->poly_);
 		}
-		varList = varList->next;
+		varList = varList->after_;
 	}
-	printError("Not initialize variable ", variable);
+	printError("[ERROR] Variable is not initialized", variable);
 }
 
-struct Mononom* setMononom(int coefficient, char *letter, int power)
-{
-	struct Mononom *result = (struct Mononom *)malloc(sizeof(struct Mononom));
-
-	result->coefficient = coefficient;
-
-	if ((strcmp(letter, "") && power == 0) || coefficient == 0)
-	{
-		memset(result->variable, 0, MAX_L);
-		result->power = 0;
-		return result;
+struct Monomial* createMonomial(int coefficient, char* variable, int degree, bool is_number){
+	struct Monomial* mono = (struct Monomial *) malloc(sizeof(struct Monomial));
+	
+	mono->coef_ = coefficient;
+	mono->degree_ = degree;
+	if(is_number){
+		memset(mono->var_,0,MAX_LEN );
+	}
+	else{
+		strncpy(mono->var_,variable,MAX_LEN);
 	}
 
-	strncpy(result->variable, letter, MAX_L);
-	result->power = power;
-	return result;
+	return mono;
 }
 
-struct Polynom* initPolynom(void)
+void addMononomToPolynom(struct Polinomial* poly, struct Monomial mono)
 {
-	struct Polynom *result = (struct Polynom *)malloc(sizeof(struct Polynom));
+	poly->end_->after_ = (struct Part *) malloc(sizeof(struct Part));
 
-	result->begin = (struct Node *) malloc(sizeof(struct Node));
-	result->begin->prev = NULL;
-	result->begin->next = NULL;
-	result->count = 0;
+	poly->end_->after_->before_ = poly->end_;
+	poly->end_->after_->after_ = NULL;
+	poly->end_->after_->mono_ = mono;
 
-	return result;
+	poly->end_ = poly->end_->after_;
+	poly->count_parts_++;
 }
 
-struct Polynom* addMononomToPolynom(struct Polynom polynom, struct Mononom mononom)
+struct Part * deleteNode(struct Polinomial *polynom, struct Part *node)
 {
-	struct Node * node;
-	struct Polynom *result = (struct Polynom *)malloc(sizeof(struct Polynom));
+	struct Part * result = node;
 
-	node = polynom.begin;
-
-	if (polynom.count == 0)
+	if (polynom->begin_ == node)
 	{
-		node->item = mononom;
-		polynom.count++;
-		(*result) = polynom;
-		return result;
-	}
-
-	while (node->next != NULL)
-	{
-		node = node->next;
-	}
-
-	node->next = (struct Node *)malloc(sizeof(struct Node));
-	node->next->prev = node;
-	node->next->next = NULL;
-	node = node->next;
-	node->item = mononom;
-
-	polynom.count++;
-	(*result) = polynom;
-	return result;
-}
-
-struct Node * deleteNode(struct Polynom *polynom, struct Node *node)
-{
-	struct Node * result = node;
-
-	if (polynom->begin == node)
-	{
-		if (node->next == NULL)
+		if (node->after_ == NULL)
 		{
 			free(node);
 			return NULL;
 		}
 
-		node->next->prev = NULL;
-		result = node->next;
+		node->after_->before_ = NULL;
+		result = node->after_;
 		free(node);
 
-		polynom->begin = result;
+		polynom->begin_ = result;
 		return result;
 	}
 
-	if (node->next == NULL)
+	if (node->after_ == NULL)
 	{
-		node->prev->next = NULL;
-		result = node->prev;
+		node->before_->after_ = NULL;
+		result = node->before_;
 
 		free(node);
 		return result;
 	}
 
-	node->next->prev = node->prev;
-	node->prev->next = node->next;
-	result = node->prev;
+	node->after_->before_ = node->before_;
+	node->before_->after_ = node->after_;
+	result = node->before_;
 	free(node);
 	return result;
 }
 
-struct Polynom * deleteSimilarSummands(struct Polynom polynom)
+struct Polinomial * deleteSimilarSummands(struct Polinomial polynom)
 {
-	struct Polynom * result = initPolynom();
-	for (struct Node *i = polynom.begin; i != NULL;)
+	struct Polinomial * result = NULL;
+	for (struct Part *i = polynom.begin_; i != NULL;)
 	{
-		struct Mononom mononom = i->item;
-		for (struct Node *j = polynom.begin; j != NULL; j = j->next)
+		struct Monomial mononom = i->mono_;
+		for (struct Part *j = polynom.begin_; j != NULL; j = j->after_)
 		{
-			if (strncmp(i->item.variable, j->item.variable, MAX_L) == 0 &&
-				i->item.power == j->item.power &&
+			if (strncmp(i->mono_.var_, j->mono_.var_, MAX_LEN) == 0 &&
+				i->mono_.degree_ == j->mono_.degree_ &&
 				i != j)
 			{
-				mononom.coefficient += j->item.coefficient;
-				if (mononom.coefficient == 0)
+				mononom.coef_ += j->mono_.coef_;
+				if (mononom.coef_ == 0)
 				{
-					mononom.power = 0;
-					strncpy(mononom.variable, "", MAX_L);
+					mononom.degree_ = 0;
+					strncpy(mononom.var_, "", MAX_LEN);
 				}
 
 				j = deleteNode(&polynom, j);
@@ -179,40 +162,42 @@ struct Polynom * deleteSimilarSummands(struct Polynom polynom)
 		}
 
 		i = deleteNode(&polynom, i);
-		struct Polynom *freePtr = result;
-		result = addMononomToPolynom(*result, mononom);
-		free(freePtr);
+		if (result == NULL){
+			result = initPolynom(mononom);
+		}
+		else{
+			addMononomToPolynom(result, mononom);
+		}
+		
 	}
 
 	return result;
 }
 
-struct Polynom* sumPolynoms(struct Polynom p1, struct Polynom p2)
+struct Polinomial* sumPolynoms(struct Polinomial p1, struct Polinomial p2)
 {
-	for (struct Node* i = p1.begin; i != NULL; i = i->next)
+	for (struct Part* i = p1.begin_; i != NULL; i = i->after_)
 	{
-		char varI[MAX_L] = {0};
-		strncpy(varI, i->item.variable, MAX_L);
-		for (struct Node* j = p2.begin; j != NULL; j = j->next)
+		char varI[MAX_LEN] = {0};
+		strncpy(varI, i->mono_.var_, MAX_LEN);
+		for (struct Part* j = p2.begin_; j != NULL; j = j->after_)
 		{
-			char varJ[MAX_L] = {0};
-			strncpy(varJ, j->item.variable, MAX_L);
+			char varJ[MAX_LEN] = {0};
+			strncpy(varJ, j->mono_.var_, MAX_LEN);
 
-			if (strncmp(varI, varJ, MAX_L) != 0 && strncmp(varI, "", MAX_L) != 0 && strncmp(varJ, "", MAX_L) != 0)//Если переменные не совпадают и ни одна из переменных не является числом, то ошибка
+			if (strncmp(varI, varJ, MAX_LEN) != 0 && strncmp(varI, "", MAX_LEN) != 0 && strncmp(varJ, "", MAX_LEN) != 0)//Если переменные не совпадают и ни одна из переменных не является числом, то ошибка
 			{
-				printError("different variables in polynom", "");
+				printError("[ERROR] Different variables in polynom", "");
 			}
 		}
 	}
 
-	struct Polynom *result = (struct Polynom *)malloc(sizeof(struct Polynom));
+	struct Polinomial *result = (struct Polinomial *)malloc(sizeof(struct Polinomial));
 	(*result) = p1;
-	struct Polynom *freePtr;
-	for (struct Node *node = p2.begin; node != NULL; node = node->next)
+	struct Polinomial *freePtr;
+	for (struct Part *node = p2.begin_; node != NULL; node = node->after_)
 	{
-		freePtr = result;
-		result = addMononomToPolynom(*result, node->item);
-		free(freePtr);
+		addMononomToPolynom (result, node->mono_);
 	}
 
 	freePtr = result;
@@ -221,151 +206,154 @@ struct Polynom* sumPolynoms(struct Polynom p1, struct Polynom p2)
 	return result;
 }
 
-struct Polynom* unaryMinus(struct Polynom *polynom)
+struct Polinomial* unaryMinus(struct Polinomial *polynom)
 {
-	for (struct Node *node = polynom->begin; node != NULL; node = node->next)
+	for (struct Part *node = polynom->begin_; node != NULL; node = node->after_)
 	{
-		node->item.coefficient *= (-1);
+		node->mono_.coef_ *= (-1);
 	}
 
-	struct Polynom * result = deleteSimilarSummands(*polynom);
+	struct Polinomial * result = deleteSimilarSummands(*polynom);
 	return result;
 }
 
-struct Polynom * subPolynoms(struct Polynom p1, struct Polynom p2)
+struct Polinomial * subPolynoms(struct Polinomial p1, struct Polinomial p2)
 {
-	for (struct Node *i = p1.begin; i != NULL; i = i->next)
+	for (struct Part *i = p1.begin_; i != NULL; i = i->after_)
 	{
-		for (struct Node *j = p2.begin; j != NULL; j = j->next)
+		for (struct Part *j = p2.begin_; j != NULL; j = j->after_)
 		{
-			char varI[MAX_L] = {0};
-			strncpy(varI, i->item.variable, MAX_L);
-			char varJ[MAX_L] = {0};
-			strncpy(varJ, j->item.variable, MAX_L);
+			char varI[MAX_LEN] = {0};
+			strncpy(varI, i->mono_.var_, MAX_LEN);
+			char varJ[MAX_LEN] = {0};
+			strncpy(varJ, j->mono_.var_, MAX_LEN);
 
-			if (strncmp(varI, varJ, MAX_L) != 0 && strncmp(varI, "", MAX_L) != 0 && strncmp(varJ, "", MAX_L) != 0) //Если переменные не совпадают и ни одна из переменных не является числом, то
+			if (strncmp(varI, varJ, MAX_LEN) != 0 && strncmp(varI, "", MAX_LEN) != 0 && strncmp(varJ, "", MAX_LEN) != 0) //Если переменные не совпадают и ни одна из переменных не является числом, то
 			{
-				printError("different variables in polynom", "");
+				printError("[ERROR] Different variables in polynom", "");
 			}
 		}
 	}
 
-	struct Polynom *minusP2 = unaryMinus(&p2);
-	struct Polynom * result = sumPolynoms(p1, *minusP2);
+	struct Polinomial *minusP2 = unaryMinus(&p2);
+	struct Polinomial * result = sumPolynoms(p1, *minusP2);
 	result = deleteSimilarSummands(*result);
 
 	return result;
 }
 
-struct Polynom * mulPolynoms(struct Polynom p1, struct Polynom p2)
+struct Polinomial * mulPolynoms(struct Polinomial p1, struct Polinomial p2)
 {
-	struct Polynom * result = initPolynom();
+	struct Polinomial * result = NULL;
 		
-	for (struct Node *i = p1.begin; i != NULL; i = i->next)
+	for (struct Part *i = p1.begin_; i != NULL; i = i->after_)
 	{
-		for (struct Node *j = p2.begin; j != NULL; j = j->next)
+		for (struct Part *j = p2.begin_; j != NULL; j = j->after_)
 		{
-			struct Mononom mononom = i->item;
+			struct Monomial mononom = i->mono_;
 
-			mononom.coefficient *= j->item.coefficient;
+			mononom.coef_ *= j->mono_.coef_;
 
-			bool IisNumber = (strncmp(mononom.variable, "", MAX_L) == 0);
-			bool JisNumber = (strncmp(j->item.variable, "", MAX_L) == 0);
-			bool varMatch = (strcmp(mononom.variable, j->item.variable) == 0);
+			bool IisNumber = (strncmp(mononom.var_, "", MAX_LEN) == 0);
+			bool JisNumber = (strncmp(j->mono_.var_, "", MAX_LEN) == 0);
+			bool varMatch = (strcmp(mononom.var_, j->mono_.var_) == 0);
 
 			if (!IisNumber && varMatch) //у обоих одинаковая переменная
 			{
-				mononom.power += j->item.power;
+				mononom.degree_ += j->mono_.degree_;
 			}
 			else if (IisNumber && !JisNumber)//У мононома нет переменной, у второго есть
 			{
-				strncpy(mononom.variable, j->item.variable, MAX_L);
-				mononom.power += j->item.power;
+				strncpy(mononom.var_, j->mono_.var_, MAX_LEN);
+				mononom.degree_ += j->mono_.degree_;
 				}
 			else if (!IisNumber && !JisNumber && !varMatch)//у обоих разные переменные
 			{
-				printError("different variables in polynom", "");
+				printError("[ERROR] Different variables in polynom", "");
 			}
 
-			if (mononom.coefficient == 0)
+			if (mononom.coef_ == 0)
 			{
-				strncpy(mononom.variable, "", MAX_L);
-				mononom.power = 0;
+				strncpy(mononom.var_, "", MAX_LEN);
+				mononom.degree_ = 0;
 			}
 
-			struct Polynom *freePtr = result;
-			result = addMononomToPolynom(*result, mononom);
-			free(freePtr);
+			if (result == NULL){
+				result = initPolynom(mononom);
+			}
+			else{
+				addMononomToPolynom(result, mononom);
+			}
 		}
 	}
 
-	struct Polynom *freePtr = result;
+	struct Polinomial *freePtr = result;
 	result = deleteSimilarSummands(*result);
 	free(freePtr);
 	return result;
 }
 
-void printMononom(struct Mononom *mononom)
+void printMononom(struct Monomial *mononom)
 {
-	if (!strcmp(mononom->variable, ""))
+	if (!strcmp(mononom->var_, ""))
 	{
-		printf("%d", mononom->coefficient);
+		printf("%d", mononom->coef_);
 	}
 	else
 	{
-		if (abs(mononom->coefficient) == 1)
+		if (abs(mononom->coef_) == 1)
 		{
-			if (mononom->coefficient == -1)
+			if (mononom->coef_ == -1)
 			{
 				printf("-");
 			}
-			if (mononom->power == 1)
+			if (mononom->degree_ == 1)
 			{
-				printf("%s", mononom->variable);
+				printf("%s", mononom->var_);
 			}
 			else
 			{
-				printf("%s^%d", mononom->variable, mononom->power);
+				printf("%s^%d", mononom->var_, mononom->degree_);
 			}
 		}
 		else
 		{
-			if (mononom->power == 1)
+			if (mononom->degree_ == 1)
 			{
-				printf("%d%s", mononom->coefficient, mononom->variable);
+				printf("%d%s", mononom->coef_, mononom->var_);
 			}
 			else
 			{
-				printf("%d%s^%d", mononom->coefficient, mononom->variable, mononom->power);
+				printf("%d%s^%d", mononom->coef_, mononom->var_, mononom->degree_);
 			}
 		}
 	}
 }
 
-void printPolynom(struct Polynom *polynom)
+void printPolynom(struct Polinomial *polynom)
 {
-	struct Node *begin = polynom->begin;
+	struct Part *begin = polynom->begin_;
 	// printf("= ");
 	
-	while (begin->item.coefficient == 0 && begin->next != NULL)
+	while (begin->mono_.coef_ == 0 && begin->after_ != NULL)
 	{
-		begin = begin->next;
+		begin = begin->after_;
 	}
 
 	int itemNum = 0;
-	for (struct Node *node = begin; node != NULL; node = node->next)
+	for (struct Part *node = begin; node != NULL; node = node->after_)
 	{
 		itemNum++;
 	}
 
 	bool *itemWasPrinted = (bool *)calloc(sizeof(bool), itemNum);
 
-	char varName[MAX_L] = { 0 };
-	for (struct Node *node = begin; node != NULL; node = node->next)
+	char varName[MAX_LEN] = { 0 };
+	for (struct Part *node = begin; node != NULL; node = node->after_)
 	{
-		if (strncmp(node->item.variable, "", MAX_L) != 0)//Если это не число
+		if (strncmp(node->mono_.var_, "", MAX_LEN) != 0)//Если это не число
 		{
-			strncpy(varName, node->item.variable, MAX_L);	
+			strncpy(varName, node->mono_.var_, MAX_LEN);	
 		}
 	}
 
@@ -377,15 +365,15 @@ void printPolynom(struct Polynom *polynom)
 		int maxPower = 0;
 		int currentItemIndex = 0;
 		int itemIndex = 0;
-		struct Node *result = begin;
-		for (struct Node *node = begin; node != NULL; node = node->next)
+		struct Part *result = begin;
+		for (struct Part *node = begin; node != NULL; node = node->after_)
 		{
-			if (strncmp(node->item.variable, varName, MAX_L) == 0 && //Если совпадает имя переменной
+			if (strncmp(node->mono_.var_, varName, MAX_LEN) == 0 && //Если совпадает имя переменной
 				!itemWasPrinted[currentItemIndex] &&					  //Эта переменная не была выведена
-				node->item.power > maxPower)					  //Cтепень выше других
+				node->mono_.degree_ > maxPower)					  //Cтепень выше других
 			{
 				result = node;
-				maxPower = node->item.power;
+				maxPower = node->mono_.degree_;
 				itemIndex = currentItemIndex;
 			}
 
@@ -395,13 +383,13 @@ void printPolynom(struct Polynom *polynom)
 		if (maxPower != 0)//Если был найден хоть один подходящий элемент, то
 		{
 			//Вывести найденный элемент
-			if (firstWasPrinted && result->item.coefficient > 0)//Если уже были выведены значения и коэффициент положительный
+			if (firstWasPrinted && result->mono_.coef_ > 0)//Если уже были выведены значения и коэффициент положительный
 			{
 				printf("+");
 			}
 
 			firstWasPrinted = true;
-			printMononom(&result->item);
+			printMononom(&result->mono_);
 			itemWasPrinted[itemIndex] = true;
 		}
 		else
@@ -411,17 +399,17 @@ void printPolynom(struct Polynom *polynom)
 	}
 	
 	//Вывести константное значение
-	for (struct Node *node = begin; node != NULL; node = node->next)
+	for (struct Part *node = begin; node != NULL; node = node->after_)
 	{
-		if (strncmp(node->item.variable, "", MAX_L) == 0 && node->item.coefficient != 0)
+		if (strncmp(node->mono_.var_, "", MAX_LEN) == 0 && node->mono_.coef_ != 0)
 		{
-			if (firstWasPrinted && node->item.coefficient > 0) //Если уже были выведены значения и коэффициент положительный
+			if (firstWasPrinted && node->mono_.coef_ > 0) //Если уже были выведены значения и коэффициент положительный
 			{
 				printf("+");
 			}
 
 			firstWasPrinted = true;
-			printMononom(&node->item);
+			printMononom(&node->mono_);
 			break;
 		}
 	}
@@ -442,11 +430,11 @@ void printPolynom(struct Polynom *polynom)
 
 	void yyerror(char const *s)
 {
-	printf("ERROR in line %d: '%s'\n", line_count + 1, s);
+	printf("[ERROR] Line %d: '%s'\n", line_count + 1, s);
 }
 
 void printError(const char *s1, const char *s2)
 {
-	printf("ERROR in line %d: %s%s\n", line_count + 1, s1, s2);
+	printf("[ERROR] Line %d: %s%s\n", line_count + 1, s1, s2);
 	exit(-1);
 }

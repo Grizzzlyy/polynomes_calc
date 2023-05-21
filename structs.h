@@ -5,49 +5,52 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
 
-#define MAX_L 50
+#define MAX_LEN 32
 
-struct Mononom
+struct Monomial
 {
-	int coefficient;
-	char variable[MAX_L];
-	int power;
+	char var_[MAX_LEN];
+	int coef_;
+	int degree_;
 };
 
-struct Polynom
+struct Polinomial
 {
-	struct Node* begin;
-	int count;
+	struct Part* begin_;
+	struct Part* end_;
+	int count_parts_;
 };
 
-struct Node
+struct Part
 {
-	struct Mononom item;
-	struct Node* next;
-	struct Node* prev;
+	struct Part* before_;
+	struct Monomial mono_;
+	struct Part* after_;
 };
 
-struct Variable
+struct LanguageVar
 {
-	char* variable;	
-	struct Polynom polynom; 
-	struct Variable* next;
-	struct Variable* prev;
+	
+	struct LanguageVar* before_;
+	char* var_;	
+	struct Polinomial poly_; 
+	struct LanguageVar* after_;
 };
 
+void addMononomToPolynom (struct Polinomial*, struct Monomial);
 void printError	(const char *, const char *);
-void addVariableToList (char *, struct Polynom );
-struct Polynom* getVariable (char *);
-struct Mononom* setMononom (int, char *, int);
-struct Polynom* initPolynom (void);
-struct Polynom* addMononomToPolynom (struct Polynom, struct Mononom);
-struct Node* deleteNode (struct Polynom *, struct Node *);
-struct Polynom* deleteSimilarSummands (struct Polynom);
-struct Polynom* sumPolynoms (struct Polynom, struct Polynom);
-struct Polynom* subPolynoms (struct Polynom, struct Polynom);
-struct Polynom* mulPolynoms (struct Polynom, struct Polynom);
-struct Polynom* unaryMinus (struct Polynom *);
-void printMononom (struct Mononom *);
-void printPolynom (struct Polynom *);
+void addVariableToList (char *, struct Polinomial );
+struct Polinomial* initVariable (char *);
+struct Monomial* createMonomial(int, char *, int, bool);
+struct Polinomial* initPolynom (struct Monomial mono);
+struct Part* deleteNode (struct Polinomial *, struct Part *);
+struct Polinomial* deleteSimilarSummands (struct Polinomial);
+struct Polinomial* sumPolynoms (struct Polinomial, struct Polinomial);
+struct Polinomial* subPolynoms (struct Polinomial, struct Polinomial);
+struct Polinomial* mulPolynoms (struct Polinomial, struct Polinomial);
+struct Polinomial* unaryMinus (struct Polinomial *);
+void printMononom (struct Monomial *);
+void printPolynom (struct Polinomial *);
 #endif

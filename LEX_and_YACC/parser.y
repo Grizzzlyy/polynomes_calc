@@ -10,8 +10,8 @@
 {
 	int 				num_y;
 	char 				str_y[50];
-	struct Mononom*		monomial_t;
-	struct Polynom*		polinomial_t;
+	struct Monomial*		monomial_t;
+	struct Polinomial*		polinomial_t;
 }
 
  /* start */
@@ -43,14 +43,12 @@ beginning:
 statement:
 	PRINT polinomial EOO
 	{
-		//printf("[POLY] poly\n");
 		printf("\nRESULT: ");
 		printPolynom($2);
 		free($2);
 	}
 	| varib EQS polinomial EOO
 	{
-		//printf("$p = poly;\n");
 		addVariableToList($1, *$3);
 		free($3);
 	}
@@ -58,35 +56,17 @@ statement:
 varib:
 	DLLR STR
 	{
-		//printf("var\n");
-		strncpy($$, $2, MAX_L);
+		strncpy($$, $2, MAX_LEN);
 	}
 	;
 polinomial:
-	varib
+	monomial
 	{
-		//printf("variable\n");
-		struct Polynom * poly;
-		poly = initPolynom();
-		struct Mononom *mono = setMononom(1, "", 0);
-		poly = addMononomToPolynom(*poly, *mono);
-		free(mono);
-
-		$$ = getVariable($1); 
-
-		$$ = mulPolynoms(*$$, *poly);
-		free(poly);
-	}
-	| monomial
-	{
-		//printf("mononom\n");
-		$$ = initPolynom();
-		$$ = addMononomToPolynom(*$$, *$1);
+		$$ = initPolynom(*$1);
 		free($1);
 	}
 	| LBKT polinomial RBKT
 	{
-		//printf("()\n");
 		$$ = $2;
 	}
 	| polinomial PLUS polinomial
@@ -117,12 +97,6 @@ polinomial:
 		free($1);
 		free($2);
 	}
-	/* | polinomial DIV polinomial
-	{
-		printf("warning: division is not realized, so the operation is skipped\n");
-		//printf("/\n");
-		// todo
-	} */
 	| SUB polinomial %prec UMINUS
 	{
 		//printf("U-\n");
@@ -131,25 +105,23 @@ polinomial:
 	| polinomial PWR polinomial
 	{
 		//printf("^\n");
-		if (strcmp($3->begin->item.variable, "") != 0)
+		if (strcmp($3->begin_->mono_.var_, "") != 0)
 		{
-			printError("incorrect pow: ^", $3->begin->item.variable);
+			printError("incorrect pow: ^", $3->begin_->mono_.var_);
 			free($1);
 			free($3);
 			return -1;
 		}
 		
-		int pow = $3->begin->item.coefficient;
+		int pow = $3->begin_->mono_.coef_;
 		if (pow == 0)
 		{
-			if ($1->begin->item.coefficient == 0)
+			if ($1->begin_->mono_.coef_ == 0)
 			{
 				printError("uncertainty (0^0)", "");
 			}
-
-			$$ = initPolynom();
-			struct Mononom *mono = setMononom(1, "", 0);
-			$$ = addMononomToPolynom(*$$, *mono);
+			struct Monomial *mono = createMonomial(1, "", 0, false);
+			$$ = initPolynom(*mono);
 			free(mono);
 			free($1);
 			free($3);
@@ -174,25 +146,30 @@ polinomial:
 			printError("power cannot be < 0", "");
 		}
 	}
+	|varib
+	{
+		//printf("variable\n");
+		struct Polinomial * poly;
+		struct Monomial *mono = createMonomial(1, "", 0, true);
+		poly = initPolynom(*mono);
+		free(mono);
+
+		$$ = initVariable($1); 
+
+		$$ = mulPolynoms(*$$, *poly);
+		free(poly);
+	}
 	;
 monomial:
-	/*
-	NUM STR %prec MULT
-	{
-		$$ = sumPolynoms(*(setMononom($1, "", 0)), *(setMononom(1, $2, 1)));
-		free($1);
-		free($2);
-	}	
-	| */
 	NUM
 	{
 		//printf("num\n");
-		$$ = setMononom($1, "", 0);
+		$$ = createMonomial($1, "", 0, true);
 	}
 	| STR
 	{
 		//printf("Mstr\n");
-		$$ = setMononom(1, $1, 1);
+		$$ = createMonomial(1, $1, 1, false);
 	}
 	;
 
