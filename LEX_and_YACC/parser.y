@@ -80,7 +80,7 @@ polinomial:
 	{
 		//printf("-\n");
 		$$ = subPolynoms(*$1, *$3);
-		$$ = deleteSimilarSummands(*$$);
+		RemoveSimilarTerms($$);
 		free($1);
 		free($3);
 	}
