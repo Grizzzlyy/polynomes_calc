@@ -130,8 +130,6 @@ struct Part * deleteNode(struct Polinomial *polynom, struct Part *node)
 		polynom->begin_ = result;
 		return result;
 	}
-
-	free(node);
 	return result;
 }
 
