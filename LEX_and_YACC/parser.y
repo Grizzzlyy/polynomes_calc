@@ -49,7 +49,7 @@ statement:
 	}
 	| varib EQS polinomial EOO
 	{
-		addVariableToList($1, *$3);
+		VarToList($1, *$3);
 		free($3);
 	}
 	;
@@ -62,7 +62,7 @@ varib:
 polinomial:
 	monomial
 	{
-		$$ = initPolynom(*$1);
+		$$ = InitPolinom(*$1);
 		free($1);
 	}
 	| LBKT polinomial RBKT
@@ -84,13 +84,13 @@ polinomial:
 	}
 	| polinomial MULT polinomial
 	{
-		$$ = mulPolynoms(*$1, *$3);
+		$$ = PolinomialUmnozh(*$1, *$3);
 		free($1);
 		free($3);
 	}
 	| polinomial polinomial %prec MULT
 	{
-		$$ = mulPolynoms(*$1, *$2);
+		$$ = PolinomialUmnozh(*$1, *$2);
 		free($1);
 		free($2);
 	}
@@ -102,7 +102,7 @@ polinomial:
 	{
 		if (strcmp($3->begin_->mono_.var_, "") != 0)
 		{
-			printError("[ERROR] Wrong degree: ^", $3->begin_->mono_.var_);
+			ErrorPrint("[ERROR] Wrong degree: ^", $3->begin_->mono_.var_);
 			free($1);
 			free($3);
 			return -1;
@@ -113,10 +113,10 @@ polinomial:
 		{
 			if ($1->begin_->mono_.coef_ == 0)
 			{
-				printError("[ERROR] Get out Hacker! (0^0)", "");
+				ErrorPrint("[ERROR] Get out Hacker! (0^0)", "");
 			}
-			struct Monomial *mono = createMonomial(1, "", 0, false);
-			$$ = initPolynom(*mono);
+			struct Monomial *mono = CreateMonomial(1, "", 0, false);
+			$$ = InitPolinom(*mono);
 			free(mono);
 			free($1);
 			free($3);
@@ -131,37 +131,37 @@ polinomial:
 			$$ = $1;
 			for (int i = 0; i < pow - 1; i++)
 			{
-				$$ = mulPolynoms(*$$, *$1);
+				$$ = PolinomialUmnozh(*$$, *$1);
 			}
 			free($1);
 			free($3);
 		}
 		else
 		{
-			printError("[ERROR] degree cannot be less than 0", "");
+			ErrorPrint("[ERROR] degree cannot be less than 0", "");
 		}
 	}
 	|varib
 	{
 		struct Polinomial * poly;
-		struct Monomial *mono = createMonomial(1, "", 0, true);
-		poly = initPolynom(*mono);
+		struct Monomial *mono = CreateMonomial(1, "", 0, true);
+		poly = InitPolinom(*mono);
 		free(mono);
 
 		$$ = initVariable($1); 
 
-		$$ = mulPolynoms(*$$, *poly);
+		$$ = PolinomialUmnozh(*$$, *poly);
 		free(poly);
 	}
 	;
 monomial:
 	NUM
 	{
-		$$ = createMonomial($1, "", 0, true);
+		$$ = CreateMonomial($1, "", 0, true);
 	}
 	| STR
 	{
-		$$ = createMonomial(1, $1, 1, false);
+		$$ = CreateMonomial(1, $1, 1, false);
 	}
 	;
 

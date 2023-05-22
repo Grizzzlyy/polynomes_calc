@@ -28,3 +28,5 @@ print (x)x + x^2;
 print (x^3)(x^3)(x^3);
 print t+(-t);
 print t--t;
+$var1 = x^75 + 13x + 123x^123 + 622; $var2 = x^75 + 18; $var3 = x^123 + 2x; print $var1 + $var2 + $var3;
+$g3a = 1; print $g3a;

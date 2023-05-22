@@ -40,17 +40,17 @@ struct LanguageVar
 };
 
 void addMononomToPolynom (struct Polinomial*, struct Monomial);
-void printError	(const char *, const char *);
-void addVariableToList (char *, struct Polinomial );
+void ErrorPrint	(const char *, const char *);
+void VarToList (char *, struct Polinomial );
 struct Polinomial* initVariable (char *);
-struct Monomial* createMonomial(int, char *, int, bool);
-struct Polinomial* initPolynom (struct Monomial mono);
+struct Monomial* CreateMonomial(int, char *, int, bool);
+struct Polinomial* InitPolinom (struct Monomial mono);
 struct Part* deleteNode (struct Polinomial *, struct Part *);
 struct Polinomial* RemoveSimilarTerms (struct Polinomial);
 struct Polinomial* PolinomialSum (struct Polinomial, struct Polinomial);
 struct Polinomial* PolinomialMinus (struct Polinomial, struct Polinomial);
-struct Polinomial* mulPolynoms (struct Polinomial, struct Polinomial);
+struct Polinomial* PolinomialUmnozh (struct Polinomial, struct Polinomial);
 struct Polinomial* MinusUnar (struct Polinomial *);
-void printMononom (struct Monomial *);
+void MonomialPrint (struct Monomial *);
 void printPolynom (struct Polinomial *);
 #endif
