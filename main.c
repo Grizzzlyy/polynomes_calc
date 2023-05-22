@@ -102,7 +102,7 @@ void addMononomToPolynom(struct Polinomial* poly, struct Monomial mono)
 	poly->count_parts_++;
 }
 
-struct Part * deleteNode(struct Polinomial *polynom, struct Part *node)
+struct Part * RemoveTerm(struct Polinomial *polynom, struct Part *node)
 {
 	struct Part * result = node;
 
@@ -152,11 +152,11 @@ struct Polinomial* RemoveSimilarTerms(struct Polinomial polynom)
 					strncpy(mononom.var_, "", MAX_LEN);
 				}
 
-				j = deleteNode(&polynom, j);
+				j = RemoveTerm(&polynom, j);
 			}
 		}
 
-		i = deleteNode(&polynom, i);
+		i = RemoveTerm(&polynom, i);
 		if (new_poly == NULL){
 			new_poly = initPolynom(mononom);
 		}
@@ -169,7 +169,7 @@ struct Polinomial* RemoveSimilarTerms(struct Polinomial polynom)
 	return new_poly;
 }
 
-struct Polinomial* sumPolynoms(struct Polinomial p1, struct Polinomial p2)
+struct Polinomial* PolinomialSum(struct Polinomial p1, struct Polinomial p2)
 {
 	for (struct Part* i = p1.begin_; i != NULL; i = i->after_)
 	{
@@ -189,15 +189,12 @@ struct Polinomial* sumPolynoms(struct Polinomial p1, struct Polinomial p2)
 
 	struct Polinomial *result = (struct Polinomial *)malloc(sizeof(struct Polinomial));
 	(*result) = p1;
-	struct Polinomial *freePtr;
 	for (struct Part *node = p2.begin_; node != NULL; node = node->after_)
 	{
 		addMononomToPolynom (result, node->mono_);
 	}
 
-	freePtr = result;
 	result = RemoveSimilarTerms(*result);
-	free(freePtr);
 	return result;
 }
 
@@ -230,7 +227,7 @@ struct Polinomial * subPolynoms(struct Polinomial p1, struct Polinomial p2)
 	}
 
 	struct Polinomial *minusP2 = MinusUnar(&p2);
-	struct Polinomial * result = sumPolynoms(p1, *minusP2);
+	struct Polinomial * result = PolinomialSum(p1, *minusP2);
 	result = RemoveSimilarTerms(*result);
 
 	return result;
@@ -424,11 +421,11 @@ void printPolynom(struct Polinomial *polynom)
 
 	void yyerror(char const *s)
 {
-	printf("[ERROR] Line %d: '%s'\n", line_count + 1, s);
+	printf("[ERROR] Line: %d in input file '%s'\n", line_count + 1, s);
 }
 
 void printError(const char *s1, const char *s2)
 {
-	printf("[ERROR] Line %d: %s%s\n", line_count + 1, s1, s2);
+	printf("[ERROR] Line: %d in input file%s%s\n", line_count + 1, s1, s2);
 	exit(-1);
 }

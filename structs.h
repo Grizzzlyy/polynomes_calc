@@ -47,7 +47,7 @@ struct Monomial* createMonomial(int, char *, int, bool);
 struct Polinomial* initPolynom (struct Monomial mono);
 struct Part* deleteNode (struct Polinomial *, struct Part *);
 struct Polinomial* RemoveSimilarTerms (struct Polinomial);
-struct Polinomial* sumPolynoms (struct Polinomial, struct Polinomial);
+struct Polinomial* PolinomialSum (struct Polinomial, struct Polinomial);
 struct Polinomial* subPolynoms (struct Polinomial, struct Polinomial);
 struct Polinomial* mulPolynoms (struct Polinomial, struct Polinomial);
 struct Polinomial* MinusUnar (struct Polinomial *);

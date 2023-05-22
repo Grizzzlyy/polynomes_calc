@@ -1,27 +1,3 @@
-print 5;
-print x;
-print x+5;
-print x^2-1;
-print 7*x*6;
-print -x^3;
-$A = 6; print $A;
-$A = -(x^2+7); print $A;
-$B = 5x^2+7x^2-(-255); print $B;
-// single line comment
-print $B + $A;
-print $A + $B;
-$C = $A + $A + $B; print $C;
-print 6^2;
-print 2^3^2;
-print 2^(3^2);
-print (2^3)^2;
-print (((((y)((y)))(y))));
-print (yyy)yyy;
-$x = x^3 -100; print $x;
-
-
-
-print (x^3)(x^3)(x^3);
 //bruh
 $a = x+1; $b = x-1; print $a * $b;
 $kaka1 = xxxx^3; $kaka2 = xxxx; print $kaka1 * $kaka2;

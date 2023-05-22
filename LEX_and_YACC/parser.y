@@ -71,7 +71,7 @@ polinomial:
 	}
 	| polinomial PLUS polinomial
 	{
-		$$ = sumPolynoms(*$1, *$3);
+		$$ = PolinomialSum(*$1, *$3);
 		free($1);
 		free($3);
 	}
