@@ -11,6 +11,7 @@
 	#include <stdlib.h> /* for atoi */
 	#include <string.h> /* for strncpy */
 	#include "y.tab.h" /* for yylval, yyparse */
+	#include "../structs.h"
 	int line_count;
 %}
 
@@ -18,7 +19,6 @@
 sum			[+]
 sub			[-]
 mult		[*]
- /* div			[/] */
 pwr			['^']
 l_bkt		[(]
 r_bkt		[)]
@@ -63,7 +63,7 @@ num			[0-9]+
 
  /*vars*/
 {num}					{yylval.num_y = atoi(yytext); return NUM;}
-{str}					{memset(yylval.str_y, 0, 32); strncpy(yylval.str_y, yytext, 32); return STR;}
+{str}					{memset(yylval.str_y, 0, MAX_LEN); strncpy(yylval.str_y, yytext, MAX_LEN); return STR;}
 
 
 

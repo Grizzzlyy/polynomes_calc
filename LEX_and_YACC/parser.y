@@ -22,7 +22,7 @@
 %token <str_y> 	STR PRINT
 
 %left PLUS SUB
-%left MULT  /* DIV */
+%left MULT
 %right UMINUS
 %left PWR
 
@@ -108,12 +108,17 @@ polinomial:
 			return -1;
 		}
 		
-		int pow = $3->begin_->mono_.coef_;
-		if (pow == 0)
+		int degree = $3->begin_->mono_.coef_;
+		if (degree == 1)
+		{
+			$$ = $1;
+			free($3);
+		}
+		else if (degree == 0)
 		{
 			if ($1->begin_->mono_.coef_ == 0)
 			{
-				ErrorPrint("[ERROR] Get out Hacker! (0^0)", "");
+				ErrorPrint("[ERROR] Math error 0 in degree of 0 (0^0)", "");
 			}
 			struct Monomial *mono = CreateMonomial(1, "", 0, false);
 			$$ = InitPolinom(*mono);
@@ -121,15 +126,10 @@ polinomial:
 			free($1);
 			free($3);
 		}
-		else if (pow == 1)
+		else if (degree > 1)
 		{
 			$$ = $1;
-			free($3);
-		}
-		else if (pow > 1)
-		{
-			$$ = $1;
-			for (int i = 0; i < pow - 1; i++)
+			for (int i = 0; i < degree - 1; i++)
 			{
 				$$ = PolinomialUmnozh(*$$, *$1);
 			}

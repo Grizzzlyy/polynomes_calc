@@ -1,13 +1,16 @@
 #ifndef STRUCT_H_
 #define STRUCT_H_
 
-#include <stdio.h>	
-#include <stdlib.h>
-#include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <string.h>
+#include <stdio.h>	
+#include <stdlib.h>
 
-#define MAX_LEN 32
+
+#define MAX_LEN 50
+
+
 
 struct Monomial
 {
@@ -53,4 +56,5 @@ struct Polinomial* PolinomialUmnozh (struct Polinomial, struct Polinomial);
 struct Polinomial* MinusUnar (struct Polinomial *);
 void MonomialPrint (struct Monomial *);
 void printPolynom (struct Polinomial *);
+
 #endif

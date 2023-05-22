@@ -2,14 +2,13 @@
 
 #include "structs.h"
 
-extern int line_count;
-
 #ifdef __unix__
 	#include "Build/y.tab.h"
 #elif defined _WIN32 
 	#include "y_tab.h"
 #endif
 
+extern int line_count;
 struct LanguageVar* ListOfVariables = NULL;
 
 struct Polinomial* InitPolinom(struct Monomial mono)
