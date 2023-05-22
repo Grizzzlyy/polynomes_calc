@@ -77,7 +77,7 @@ polinomial:
 	}
 	| polinomial SUB polinomial
 	{
-		$$ = subPolynoms(*$1, *$3);
+		$$ = PolinomialMinus(*$1, *$3);
 		$$ = RemoveSimilarTerms(*$$);
 		free($1);
 		free($3);

@@ -173,14 +173,14 @@ struct Polinomial* PolinomialSum(struct Polinomial p1, struct Polinomial p2)
 {
 	for (struct Part* i = p1.begin_; i != NULL; i = i->after_)
 	{
-		char varI[MAX_LEN] = {0};
-		strncpy(varI, i->mono_.var_, MAX_LEN);
+		char variable_i[MAX_LEN] = {0};
+		strncpy(variable_i, i->mono_.var_, MAX_LEN);
 		for (struct Part* j = p2.begin_; j != NULL; j = j->after_)
 		{
-			char varJ[MAX_LEN] = {0};
-			strncpy(varJ, j->mono_.var_, MAX_LEN);
+			char variable_j[MAX_LEN] = {0};
+			strncpy(variable_j, j->mono_.var_, MAX_LEN);
 
-			if (strncmp(varI, varJ, MAX_LEN) != 0 && strncmp(varI, "", MAX_LEN) != 0 && strncmp(varJ, "", MAX_LEN) != 0)//Если переменные не совпадают и ни одна из переменных не является числом, то ошибка
+			if (strncmp(variable_i, variable_j, MAX_LEN) != 0 && strncmp(variable_i, "", MAX_LEN) != 0 && strncmp(variable_j, "", MAX_LEN) != 0)//Если переменные не совпадают и ни одна из переменных не является числом, то ошибка
 			{
 				printError("[ERROR] Different variables in polynom", "");
 			}
@@ -208,7 +208,7 @@ struct Polinomial* MinusUnar(struct Polinomial *polynom)
 	return result;
 }
 
-struct Polinomial * subPolynoms(struct Polinomial p1, struct Polinomial p2)
+struct Polinomial * PolinomialMinus(struct Polinomial p1, struct Polinomial p2)
 {
 	for (struct Part *i = p1.begin_; i != NULL; i = i->after_)
 	{
@@ -421,11 +421,11 @@ void printPolynom(struct Polinomial *polynom)
 
 	void yyerror(char const *s)
 {
-	printf("[ERROR] Line: %d in input file '%s'\n", line_count + 1, s);
+	printf("[ERROR] Line: %d in input file '%s'\n", line_count, s);
 }
 
 void printError(const char *s1, const char *s2)
 {
-	printf("[ERROR] Line: %d in input file%s%s\n", line_count + 1, s1, s2);
+	printf("[ERROR] Line: %d in input file%s%s\n", line_count, s1, s2);
 	exit(-1);
 }
