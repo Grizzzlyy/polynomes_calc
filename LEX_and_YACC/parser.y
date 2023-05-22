@@ -108,8 +108,8 @@ polinomial:
 			return -1;
 		}
 		
-		int pow = $3->begin_->mono_.coef_;
-		if (pow == 0)
+		int degree = $3->begin_->mono_.coef_;
+		if (degree == 0)
 		{
 			if ($1->begin_->mono_.coef_ == 0)
 			{
@@ -121,15 +121,15 @@ polinomial:
 			free($1);
 			free($3);
 		}
-		else if (pow == 1)
+		else if (degree == 1)
 		{
 			$$ = $1;
 			free($3);
 		}
-		else if (pow > 1)
+		else if (degree > 1)
 		{
 			$$ = $1;
-			for (int i = 0; i < pow - 1; i++)
+			for (int i = 0; i < degree - 1; i++)
 			{
 				$$ = PolinomialUmnozh(*$$, *$1);
 			}
