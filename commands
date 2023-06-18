@@ -1,0 +1,17 @@
+set args ./App/test.txt
+break main 
+break LEX_and_YACC/parser.y:46
+break LEX_and_YACC/parser.y:52
+break LEX_and_YACC/parser.y:59
+break LEX_and_YACC/parser.y:65
+break LEX_and_YACC/parser.y:70
+break LEX_and_YACC/parser.y:74
+break LEX_and_YACC/parser.y:80
+break LEX_and_YACC/parser.y:87
+break LEX_and_YACC/parser.y:93
+break LEX_and_YACC/parser.y:99
+break LEX_and_YACC/parser.y:103
+break LEX_and_YACC/parser.y:146
+break LEX_and_YACC/parser.y:160
+break LEX_and_YACC/parser.y:164
+

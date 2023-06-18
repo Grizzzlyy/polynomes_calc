@@ -24,7 +24,7 @@
 %left PLUS SUB
 %left MULT  /* DIV */
 %right UMINUS
-%left PWR
+%right PWR
 
  /* like typedef */
 %type <str_y>	varib
@@ -100,12 +100,14 @@ polinomial:
 	}
 	| polinomial PWR polinomial
 	{
-		if (strcmp($3->begin_->mono_.var_, "") != 0)
-		{
-			ErrorPrint("[ERROR] Wrong degree: ^", $3->begin_->mono_.var_);
-			free($1);
-			free($3);
-			return -1;
+		for (struct Part *i = $3->begin_; i != NULL; i = i->after_){
+			if (strcmp(i->mono_.var_, "") != 0)
+				{
+					ErrorPrint("[ERROR] Wrong degree: ^", $3->begin_->mono_.var_);
+					free($1);
+					free($3);
+					return -1;
+				}
 		}
 		
 		int degree = $3->begin_->mono_.coef_;

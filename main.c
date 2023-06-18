@@ -403,11 +403,11 @@ void printPolynom(struct Polinomial *polynom)
 
 	void yyerror(char const *s)
 {
-	printf("[ERROR] Line: %d in input file '%s'\n", line_count, s);
+	printf("[ERROR] Line: %d in input file '%s'\n", line_count+1, s);
 }
 
 void ErrorPrint(const char *s1, const char *s2)
 {
-	printf("[ERROR] Line: %d in input file%s%s\n", line_count, s1, s2);
+	printf("[ERROR] Line: %d in input file%s%s\n", line_count+1, s1, s2);
 	exit(-1);
 }
