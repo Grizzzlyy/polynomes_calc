@@ -88,6 +88,13 @@ struct Monomial* CreateMonomial(int coefficient, char* variable, int degree, boo
 		memset(mono->var_,0,MAX_LEN );
 	}
 	else{
+		for(size_t i = 0; i < strlen(variable); ++i){
+			if (variable[i] >='0' && variable[i] <= '9'){
+				if ((variable[i+1] >='a' && variable[i+1] <='z')|| ((variable[i+1] >='A' && variable[i+1] <='Z'))){
+					ErrorPrint("[ERROR] Incorrect name of variable in monom",variable);
+				}
+			}
+		}
 		strncpy(mono->var_,variable,MAX_LEN);
 	}
 
